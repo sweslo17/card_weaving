@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing App</title>
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+    <b-container id="app" fluid>
+        <b-row>
+            <b-col cols="5">
+                <div id="drawArea">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </b-col>
+            <b-col>
+                <div id="controlArea">
+                    <b-row>
+                        <div class="mt-1">
+                            <label for="steps">步驟數:</label>
+                            <input id="steps" type="number" @change="resetCardStep" v-model.number="steps" class="form-control">
+                        </div>
+                        <div class="mt-1">
+                            <label for="cards">卡片數:</label>
+                            <input id="cards" type="number" @change="resetCardStep" v-model.number="cards" class="form-control">
+                        </div>
+                        <div class="mt-1">
+                            <label for="repete">重複次數:</label>
+                            <input id="repeat" type="number" v-model.number="repeat" class="form-control">
+                        </div>
+                        <!--<b-button id="generateCardConfig" @click="generateCard" variant="success">產生<br>卡片設定</b-button>-->
+                    </b-row>
+                    <b-row v-show="cardConfig" v-for="(card, index) in cards">
+                        <b-col sm="2" class="card-title">
+                            卡片{{index+1}}
+                        </b-col>
+                        
+                        <b-col sm="2">
+                            <label :for="`card-initType-${index+1}`">穿孔方式</label>
+                            <b-form-select :id="`card-initType-${index+1}`" v-model="cardConfig[index].initType" class="mb-3">
+                                <b-form-select-option value="s">S穿孔</b-form-select-option>
+                                <b-form-select-option value="z">Z穿孔</b-form-select-option>
+                            </b-form-select>
+                        </b-col>
+                        <b-col sm="2">
+                            <label :for="`card-color1-${index+1}`">顏色1</label>
+                            <b-form-input :id="`card-color1-${index+1}`" v-model="cardConfig[index].color[0]" type="color"></b-form-input>
+                        </b-col>
+                        <b-col sm="2">
+                            <label :for="`card-color2-${index+1}`">顏色2</label>
+                            <b-form-input :id="`card-color2-${index+1}`" v-model="cardConfig[index].color[1]" type="color"></b-form-input>
+                        </b-col>
+                        <b-col sm="2">
+                            <label :for="`card-color3-${index+1}`">顏色3</label>
+                            <b-form-input :id="`card-color3-${index+1}`" v-model="cardConfig[index].color[2]" type="color"></b-form-input>
+                        </b-col>
+                        <b-col sm="2">
+                            <label :for="`card-color4-${index+1}`">顏色4</label>
+                            <b-form-input :id="`card-color4-${index+1}`" v-model="cardConfig[index].color[3]" type="color"></b-form-input>
+                        </b-col>
+                    </b-row>
+                    <b-row>
+                        <b-button variant="success" @click="addRule">增加規則</b-button>
+                    </b-row>
+                    <b-row v-for="(rule, index) in rules">
+                        <b-col sm="2">
+                            <b-form-select v-model.number="rules[index].card" class="mb-3">
+                                <b-form-select-option v-for="(card, index) in cards" :value="index">卡片{{index+1}}</b-form-select-option>
+                            </b-form-select>
+                        </b-col>
+                        <b-col sm="1">從</b-col>
+                        <b-col sm="2">
+                            <b-form-select v-model.number="rules[index].from" class="mb-3">
+                                <b-form-select-option v-for="(step, index) in steps" :value="index">步驟{{index+1}}</b-form-select-option>
+                            </b-form-select>
+                        </b-col>
+                        <b-col sm="1">到</b-col>
+                        <b-col sm="2">
+                            <b-form-select v-model.number="rules[index].to" class="mb-3">
+                                <b-form-select-option v-for="(step, index) in steps" :value="index">步驟{{index+1}}</b-form-select-option>
+                            </b-form-select>
+                        </b-col>
+                        <b-col sm="1">反轉</b-col>
+                        <b-col sm="2"><b-button variant="danger" @click="removeRule(index)">刪除規則</b-button></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-button variant="success" @click="drawAll">繪製</b-button>
+                    </b-row>
+                </div>
+            </b-col>
+          </b-row>
+    </b-container>
+   
+    <!-- Load polyfills to support older browsers -->
+    <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+
+    <!-- Load Vue followed by BootstrapVue -->
+    <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+
+    <!-- Load the following for BootstrapVueIcons support -->
+    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+    <script src="../js/index.js"></script>
+</body>
+</html>
