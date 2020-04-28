@@ -1,6 +1,7 @@
 # 卡片梭織模擬圖
 
 * 設定卡片梭織條件，模擬最後成品結果
+* 網頁展示： https://sweslo17.github.io/card_weaving/
 * 關於卡片梭織: https://en.wikipedia.org/wiki/Tablet_weaving
 
 ### TODO:
