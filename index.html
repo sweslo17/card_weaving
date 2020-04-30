@@ -78,17 +78,9 @@
                                 <b-form-select-option v-for="(step, index) in steps" :value="index">步驟{{index+1}}</b-form-select-option>
                             </b-form-select>
                         </b-col>
-                        <span>，</span>
+                        <span>，卡片</span>
                         <b-col sm="2">
-                            <b-form-select v-model.number="rules[index].cardFrom" class="mb-2">
-                                <b-form-select-option v-for="(card, index) in cards" :value="index">卡片{{index+1}}</b-form-select-option>
-                            </b-form-select>
-                        </b-col>
-                        <span>到</span>
-                        <b-col sm="2">
-                            <b-form-select v-model.number="rules[index].cardTo" class="mb-3">
-                                <b-form-select-option v-for="(card, index) in cards" :value="index">卡片{{index+1}}</b-form-select-option>
-                            </b-form-select>
+                            <b-form-select v-model="rules[index].cards" :options="cardOptions" multiple :select-size="3"></b-form-select>
                         </b-col>
                         <span>反轉</span>
                         <b-col sm="2"><b-button variant="danger" @click="removeRule(index)">刪除規則</b-button></b-col>

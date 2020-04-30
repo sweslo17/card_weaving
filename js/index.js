@@ -6,6 +6,7 @@ var app = new Vue({
       cards: 0,
       steps: 0,
       cardConfig: [],
+      cardOptions: [],
       triSize: 30,
       stepConfig: [],
       rules: [],
@@ -35,6 +36,13 @@ var app = new Vue({
       if (localStorage.repeat) {
         this.repeat = parseInt(localStorage.repeat, 10);
       }
+      if (localStorage.getItem('cardOptions')) {
+        try {
+          this.cardOptions = JSON.parse(localStorage.getItem('cardOptions'));
+        } catch(e) {
+          localStorage.removeItem('cardOptions');
+        }
+      }
     },
     methods: {
       saveConfig(){
@@ -44,6 +52,7 @@ var app = new Vue({
         localStorage.triSize = this.triSize;
         localStorage.rules = JSON.stringify(this.rules);
         localStorage.repeat = this.repeat;
+        localStorage.cardOptions = JSON.stringify(this.cardOptions);
       },
       resetAll(){
         this.origin = [0, 0];
@@ -96,7 +105,7 @@ var app = new Vue({
         Lmargin = 25
         Tmargin = 10
         width = this.triSize/1.5 * this.cards + (1 * this.cards)+1;
-        height = (this.triSize * this.repeat * this.steps) + this.triSize + 3;
+        height = (this.triSize * this.repeat * this.steps) + 3;
         var canvas = document.getElementById("canvas");
         canvas.height = height + 50;
         canvas.width = width + 50;
@@ -109,7 +118,7 @@ var app = new Vue({
         // draw step text
         vueCanvas.font = "15px Arial";
         for(var i = 0; i < this.steps*this.repeat; i++) {
-          vueCanvas.fillText(i+1, 2, height-((i+1)*this.triSize));
+          vueCanvas.fillText(i+1, 2, height-(i*this.triSize));
         };
 
         // draw card text
@@ -132,8 +141,7 @@ var app = new Vue({
           }else{
             left = false;
           }
-          up = false
-          this.drawTri(vueCanvas, 0, i+1, this.cardConfig[i].color[cardColorIdx[i]%4], up, left, this.triSize);
+          //this.drawTri(vueCanvas, 0, i+1, this.cardConfig[i].color[cardColorIdx[i]%4], up, left, this.triSize);
           initCardLeft[i] = !left;
         }
         // draw steps
@@ -141,7 +149,7 @@ var app = new Vue({
           for (var i = 0; i < this.steps; i++){
             for (var j = 0; j < this.cards; j++){
               currentLeft = !(initCardLeft[j]^this.stepConfig[i][j]);
-              this.drawTri(vueCanvas, (r*this.steps)+i+1, j+1, this.cardConfig[j].color[cardColorIdx[j]%4], true, currentLeft, this.triSize);
+              this.drawTri(vueCanvas, (r*this.steps)+i, j+1, this.cardConfig[j].color[cardColorIdx[j]%4], true, currentLeft, this.triSize);
               if(this.stepConfig[i][j] == true){
                 cardColorIdx[j] += 1;
               }else{
@@ -150,7 +158,7 @@ var app = new Vue({
               if(cardColorIdx[j]<0){
                 cardColorIdx[j] = 4 + cardColorIdx[j]
               }
-              this.drawTri(vueCanvas, (r*this.steps)+i+1, j+1, this.cardConfig[j].color[cardColorIdx[j]%4], false, !currentLeft, this.triSize);
+              this.drawTri(vueCanvas, (r*this.steps)+i, j+1, this.cardConfig[j].color[cardColorIdx[j]%4], false, !currentLeft, this.triSize);
             }
           }
         }
@@ -172,13 +180,15 @@ var app = new Vue({
             "color": ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"]
           };
         }
+        this.cardOptions = [];
+        for (var i = 0; i < this.cards; i++){
+          this.cardOptions[i] = { value: i, text: '卡片'+(i+1) };
+        }
         this.resetStep();
       },
       addRule(){
         this.rules.push({
-          card: 0,
-          cardFrom: 0,
-          cardTo: 0,
+          cards: [],
           stepFrom: 0,
           stepTo: 0
         })
@@ -190,8 +200,8 @@ var app = new Vue({
         for (var i = 0; i < this.rules.length; i++){
           card = this.rules[i].card;
           for(var j = this.rules[i].stepFrom; j<=this.rules[i].stepTo; j++){
-            for(var k = this.rules[i].cardFrom; k<=this.rules[i].cardTo; k++){
-              this.stepConfig[j][k] = false;
+            for(var k = 0; k<=this.rules[i].cards.length; k++){
+              this.stepConfig[j][this.rules[i].cards[k]] = false;
             }
           }
         }
